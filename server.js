@@ -5,6 +5,9 @@ const cors = require('cors'); //middleware
 const bodyParser = require('body-parser');
 const { dbConnect } = require('./src/config/dbConnect'); 
 
+//import APIs
+const CustomerApi = require('./src/apis/customer.api');
+
 dotenv.config();
 const app = express();
 app.use(cors());
@@ -16,6 +19,9 @@ const PORT = process.env.PORT || 4445;
 app.route('/').get((req, res) => {
 res.send('Rachicoco business process handling System');
 });
+
+//register router - CHANGEABLE
+app.use('/', CustomerApi());
 
 app.listen(PORT, () => {
       dbConnect();
