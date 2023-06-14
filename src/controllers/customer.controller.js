@@ -1,6 +1,12 @@
 const Customer = require('../models/customer.model');
+/** function */
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
+const jwt = require('jsonwebtoken');
+
+const createToken = (_id) => {
+  return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
+};
 
 const signUpCustomer = async (req, res) => {
     try {
@@ -24,6 +30,52 @@ const signUpCustomer = async (req, res) => {
       }
   }
 
+  const signIncustomer = async(req,res) => {
+      const {email, password} = req.body
+
+      try {
+        if (!email || !password) {
+          return res.send({
+            error: true,
+            message: 'All fields must be filled',
+          });
+        }
+      
+        const customer = await Customer.findOne({ email })
+        if (!customer) {
+
+          return res.send({
+            error: true,
+            message: 'Incorrect email',
+          });
+        }
+      
+        const match = await bcrypt.compare(password, customer.password)
+        if (!match) {
+          return res.send({
+            error: true,
+            message: 'Incorrect password',
+          });
+        }
+    
+        const token = createToken(customer._id)
+        const id = customer._id;
+        return res.send({
+          error: false,
+          data: email,token,id,
+          message: 'succsessfully logged in',
+        });
+
+      } catch (error) {
+        return res.send({
+          error: true,
+          message: 'something went wrong',
+        });
+      }
+    } 
+
+
   module.exports = {
-    signUpCustomer
+    signUpCustomer,
+    signIncustomer
   }
