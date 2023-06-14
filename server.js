@@ -7,6 +7,7 @@ const { dbConnect } = require('./src/config/dbConnect');
 
 //import APIs
 const CustomerApi = require('./src/apis/customer.api');
+const SysUserApi = require('./src/apis/systemuser.api')
 
 dotenv.config();
 const app = express();
@@ -22,6 +23,7 @@ res.send('Rachicoco business process handling System');
 
 //register router - CHANGEABLE
 app.use('/', CustomerApi());
+app.use('/Sysuser', SysUserApi());
 
 app.listen(PORT, () => {
       dbConnect();
