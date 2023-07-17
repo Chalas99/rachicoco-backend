@@ -1,14 +1,54 @@
-/** database schema */
-const mongoose = require("mongoose");
+const { db } = require('../config/database');
 
-const customerSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true },
-  contactNum: { type: String, required: true },
-  password: { type: String, required: true }
-});
+const createCustomer = (data, res) => {
+    const firstName = data.firstName;
+    const lastName = data.lastName;
+    const contactNo = data.contactNo;
+    const email = data.email;
+    const password = data.password;
 
-const Customer = mongoose.model("Customers", customerSchema);
+    const sql = "INSERT INTO customers (firstName, lastName, contactNo, email, password) VALUES (?, ?, ?, ?, ?)";
+    db.query(sql, [firstName, lastName, contactNo, email, password], (error, results) => {
+      if (error) {
+        return res.json({ error: "Internal Server Error!" });
+      } else {
+        return res.send({ success: true, results: results, message: "User registered successfully" });
+      }
+    });
+};
 
-module.exports = Customer;
+const findCustomer = (email, res) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM customers WHERE email=?";
+      db.query(sql, email, (error, results) => {
+        if (error) throw error;
+
+        if (results.length === 0 && !error) {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
+const signInCustomer = (email) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM customers WHERE email=?";
+      db.query(sql, email, (error, results) => {
+        if (error) throw error;
+
+        if (results.length === 0 && !error) {
+          reject();
+        } else {
+          resolve(results[0]);
+        }
+      });
+  });
+};
+
+module.exports = {
+  createCustomer,
+  findCustomer,
+  signInCustomer
+}

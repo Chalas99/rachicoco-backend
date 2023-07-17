@@ -4,7 +4,7 @@ const router = express.Router();
 const customerController = require('../controllers/customer.controller');
 
 module.exports = function () {
-  router.post("/signup", customerController.signUpCustomer);
-  router.post("/signin", customerController.signIncustomer);
+  router.post("/signup",(req, res) =>  customerController.signUpCustomer(req, res));
+  router.post("/signin",(req, res) => customerController.signIncustomer(req, res));
   return router;
 }

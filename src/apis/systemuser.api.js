@@ -4,6 +4,6 @@ const router = express.Router();
 const systemuserController = require('../controllers/systemuser.controller')
 
 module.exports = function () {
-  router.post("/SystemUserLogin", systemuserController.signInSystemUser);
+  router.post("/AddUser", systemuserController.createSysUser);
   return router;
 }

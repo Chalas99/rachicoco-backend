@@ -1,17 +1,17 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
 const dotenv = require('dotenv'); 
 
 dotenv.config();
 
-const connection = mysql.createConnection({
+const db = mysql.createConnection({
   host: process.env.HOST,
   user: process.env.USER,
   password: '',
   database: process.env.DB_NAME,
-  port: process.env.DB_PORT
+ 
 });
 
-connection.connect((err) => {
+db.connect((err) => {
   if (err) {
     console.error('Error connecting to MySQL database:', err);
     return;
@@ -19,4 +19,4 @@ connection.connect((err) => {
   console.log('Connected to MySQL database!');
 });
 
-module.exports = {connection};
+module.exports = {db};
