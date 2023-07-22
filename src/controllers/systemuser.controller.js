@@ -1,35 +1,41 @@
 const SystemUser = require('../models/systemuser.model')
-/** function */
-const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
 
 
-
-const createToken = (_id) => {
-  return jwt.sign({_id}, process.env.SECRET, { expiresIn: '3d' })
+const createToken = (id) => {
+  return jwt.sign({id}, process.env.SECRET, { expiresIn: '3d' })
 };
 
 const createSysUser = async (req, res) => {
   try {
-        const sysuser = await SystemUser.findOne({ email: req.body.email });
-        if (sysuser){
-          return res
-                .status(409)
-                .send({ message: "User with given email already Exist!" });
-        }
-
+    const {firstName, lastName, email, userRole, password} = req.body;
+    await SystemUser.findUser(email, res).then(async () => {
+      try {
         const salt = await bcrypt.genSalt(10);
-        const hashPassword = await bcrypt.hash(req.body.password, salt);
+        const hashPassword = await bcrypt.hash(password, salt);
 
-        const newSysUser = await new SystemUser({ ...req.body, password: hashPassword }).save();
-        if (newSysUser){
-          return res.status(200).send({ message: "User registered successfully" });
-        }
+        const data = {
+          firstName:firstName,
+          lastName:lastName,
+          email: email,
+          userRole: userRole,
+          password: hashPassword,
+        };
 
-    } catch (error) {
-        res.status(500).send({ message: "Internal Server Error" });
-    }
+        await SystemUser.createUser(data, res);
+        } catch (error) {
+        res.json({ error: "Internal Server Error!" });
+      }
+      
+      })
+
+  } catch (error) {
+    return res.send({
+    error: true,
+    message: 'User already exists!',
+    });
+  }
 }
 
 const signInSystemUser = async(req,res) => {
@@ -43,31 +49,34 @@ const signInSystemUser = async(req,res) => {
         });
       }
     
-      const systemuser = await SystemUser.findOne({ email })
-      if (!systemuser) {
-
+      try {
+        await SystemUser.signInUser(email).then(async (user) =>{
+          if (user) {
+            bcrypt.compare(password, user.password).then((match) =>{
+              if (match) {
+                const token = createToken(user.userID)
+                const id = user.userID;
+                const role = user.userRole;
+                return res.send({
+                  error: false,
+                  user: {email,token,id,role},
+                  message: 'succsessfully logged in',
+                });
+              }
+              return res.send({
+                error: true,
+                message: 'Incorrect password',
+              });
+            })            
+          }
+        })
+      } catch (error) {
         return res.send({
           error: true,
           message: 'Incorrect email',
-        });
-      }
-    
-      const match = await bcrypt.compare(password, systemuser.password)
-      if (!match) {
-        return res.send({
-          error: true,
-          message: 'Incorrect password',
-        });
+        }); 
       }
   
-      const token = createToken(systemuser._id)
-      const id = systemuser._id;
-      return res.send({
-        error: false,
-        data: email,token,id,
-        message: 'succsessfully logged in',
-      });
-
     } catch (error) {
       return res.send({
         error: true,

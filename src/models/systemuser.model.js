@@ -1,13 +1,54 @@
-const mongoose = require("mongoose");
+const { db } = require('../config/database');
 
-const SystemUserSchema = new mongoose.Schema({
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  email: { type: String, required: true },
-  userRole: { type: String, required: true },
-  password: { type: String, required: true }
-});
+const createUser = (data, res) => {
+    const firstName = data.firstName;
+    const lastName = data.lastName;
+    const email = data.email;
+    const userRole = data.userRole;
+    const password = data.password;
 
-const SystemUser = mongoose.model("Systemusers", SystemUserSchema);
+    const sql = "INSERT INTO sysusers (firstName, lastName, email, userRole, password) VALUES (?, ?, ?, ?, ?)";
+    db.query(sql, [firstName, lastName, email, userRole, password], (error, results) => {
+      if (error) {
+        return res.json({ error: "Internal Server Error!" });
+      } else {
+        return res.send({ success: true, results: results, message: "User registered successfully" });
+      }
+    });
+};
 
-module.exports = SystemUser;
+const findUser = (email, res) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM sysusers WHERE email=?";
+      db.query(sql, email, (error, results) => {
+        if (error) throw error;
+
+        if (results.length === 0 && !error) {
+          resolve();
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
+const signInUser = (email) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM sysusers WHERE email=?";
+      db.query(sql, email, (error, results) => {
+        if (error) throw error;
+
+        if (results.length === 0 && !error) {
+          reject();
+        } else {
+          resolve(results[0]);
+        }
+      });
+  });
+};
+
+module.exports = {
+  createUser,
+  findUser,
+  signInUser
+}

@@ -9,6 +9,8 @@ const { db } = require('./src/config/database');
 //import APIs
 const CustomerApi = require('./src/apis/customer.api');
 const SysUserApi = require('./src/apis/systemuser.api')
+const AdminApi = require('./src/apis/admin.api');
+const modApi = require('./src/apis/mod.api');
 
 
 dotenv.config();
@@ -27,6 +29,8 @@ res.send('Rachicoco business process handling System');
 //register router - CHANGEABLE
 app.use('/', CustomerApi());
 app.use('/Sysuser', SysUserApi());
+app.use('/Admin', AdminApi());
+app.use('/moderator', modApi());
 
 // app.listen(PORT, () => {
 //       dbConnect();
