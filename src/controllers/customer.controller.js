@@ -8,7 +8,7 @@ const createToken = (_id) => {
 
 const signUpCustomer = async (req, res) => {
   try {
-        const {firstName, lastName, contactNo, email, password} = req.body;
+        const {firstName, lastName, contactNo, email, userRole, password} = req.body;
         await Customer.findCustomer(email, res).then(async () => {
           try {
             const salt = await bcrypt.genSalt(10);
@@ -19,6 +19,7 @@ const signUpCustomer = async (req, res) => {
             lastName:lastName,
             contactNo:contactNo,
             email: email,
+            userRole: userRole,
             password: hashPassword,
           };
   
@@ -55,9 +56,10 @@ const signIncustomer = async(req,res) => {
             if (match) {
               const token = createToken(customer.customerID)
               const id = customer.customerID;
+              const role = customer.userRole;
               return res.send({
                 error: false,
-                data: email,token,id,
+                user: {email,token,id,role},
                 message: 'succsessfully logged in',
               });
             }
@@ -83,8 +85,41 @@ const signIncustomer = async(req,res) => {
   }
 }
 
+const addSupportTicket = async (req, res) => {
+  const { name, email, type, subject, description } = req.body;
+
+  if (!name) {
+    return res.json({ error: "Name is required!" });
+  }
+
+  if (!email) {
+    return res.json({ error: "Email is required!" });
+  }
+
+  if (!subject) {
+    return res.json({ error: "Subject is required!" });
+  }
+
+  if (!description) {
+    return res.json({ error: "Description is required!" });
+  }
+
+  try {
+    const data = {
+      name: name,
+      email: email,
+      type: type,
+      subject: subject,
+      description: description,
+    };
+    rootModel.addSupportTicket(data, res);
+  } catch (err) {
+    res.json({ error: err });
+  }
+};
 
   module.exports = {
     signUpCustomer,
-    signIncustomer
+    signIncustomer,
+    addSupportTicket
   }
