@@ -1,4 +1,4 @@
-const admin = require('../models/customer.model');
+const admin = require('../models/admin.model');
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
   
@@ -6,7 +6,6 @@ const jwt = require('jsonwebtoken');
     try {
           const {Name, category, description, moisture_level, Acid_level, EC_level} = req.body;
 
-  
             const data = {
               Name:Name,
               category:category,
@@ -23,7 +22,30 @@ const jwt = require('jsonwebtoken');
             
             }
 
+  const findAllProducts = async(req, res) => {
+    const {Name} = req.body
+  
+        try {
+          await admin.findAllProduct(res).then((products) =>{
+                if (products) {
+                    return res.send({
+                    error: false,
+                    products: products,
+                    message: 'succsessfully product received',
+                  });
+                }
+              })
+            }
+              
+        catch (error) {
+          return res.send({
+            error: true,
+            message: 'Internal server error',
+          }); 
+        }}
+
   module.exports = {
     addProducts,
+    findAllProducts
    
   }

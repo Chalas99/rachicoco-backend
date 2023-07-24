@@ -18,6 +18,21 @@ const addProduct = (data, res) => {
     });
 };
 
+const findAllProduct = (res) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM products";
+      db.query(sql, (error, results) => {
+        if (error) throw error;
+        if (!error) {
+          resolve(results);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
 module.exports = {
-    addProduct
+    addProduct,
+    findAllProduct
   }
