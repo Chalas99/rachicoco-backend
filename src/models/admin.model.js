@@ -3,13 +3,14 @@ const { db } = require('../config/database');
 const addProduct = (data, res) => {
     const Name = data.Name;
     const category = data.category;
+    const price = data.price;
     const description = data.description;
     const moisture_level = data.moisture_level;
     const Acid_level = data.Acid_level;
     const EC_level = data.EC_level;
 
-    const sql = "INSERT INTO products (Name, category, description, moisture_level, Acid_level, EC_level) VALUES (?, ?, ?, ?, ?, ?)";
-    db.query(sql, [Name, category, description, moisture_level, Acid_level, EC_level], (error, results) => {
+    const sql = "INSERT INTO products (Name, category, price, description, moisture_level, Acid_level, EC_level) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    db.query(sql, [Name, category, price, description, moisture_level, Acid_level, EC_level], (error, results) => {
       if (error) {
         return res.json({ error: "Internal Server Error!" });
       } else {
@@ -23,6 +24,20 @@ const findAllProduct = (res) => {
     const sql = "SELECT * FROM products";
       db.query(sql, (error, results) => {
         if (error) throw error;
+        if (results && !error) {
+          resolve(results);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
+const deleteProduct = (ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM products WHERE productID=?";
+      db.query(sql, ID, (error, results) => {
+        if (error) throw error;
         if (!error) {
           resolve(results);
         } else {
@@ -34,5 +49,6 @@ const findAllProduct = (res) => {
 
 module.exports = {
     addProduct,
-    findAllProduct
+    findAllProduct,
+    deleteProduct
   }
