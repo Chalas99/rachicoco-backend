@@ -73,9 +73,39 @@ const addSupportTicket = (data, res) => {
   });
 };
 
+const getProductFromCart = (ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM products WHERE productID=?";
+      db.query(sql, ID, (error, results) => {
+        if (error) throw error;
+        if (!error) {
+          resolve(results[0]);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
+const addToCart = (ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM products WHERE productID=?";
+      db.query(sql, ID, (error, results) => {
+        if (error) throw error;
+        if (!error) {
+          resolve(results[0]);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
 module.exports = {
   createCustomer,
   findCustomer,
   signInCustomer,
-  addSupportTicket
+  addSupportTicket,
+  addToCart,
+  getProductFromCart
 }

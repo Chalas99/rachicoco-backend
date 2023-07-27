@@ -118,8 +118,59 @@ const addSupportTicket = async (req, res) => {
   }
 };
 
+const getProductFromCart = async(req, res) => {
+  const ID = req.params.id;
+
+  try {
+    await Customer.getProductFromCart(ID).then((products) =>{
+          if (products) {
+              return res.send({
+              error: false,
+              products: products,
+              message: 'succsessfully product received',
+            });
+          }
+        })
+      }
+        
+  catch (error) {
+    return res.send({
+      error: true,
+      message: 'Internal server error',
+    }); 
+  }
+}
+
+const addToCart = async(req, res) => {
+  const ID = req.params.id;
+
+  try {
+    await Customer.addToCart(ID).then((products) =>{
+          if (products) {
+              return res.send({
+              error: false,
+              products: products,
+              message: 'succsessfully product received',
+            });
+          }
+        })
+      }
+        
+  catch (error) {
+    return res.send({
+      error: true,
+      message: 'Internal server error',
+    }); 
+  }
+}
+
+
+
+
   module.exports = {
     signUpCustomer,
     signIncustomer,
-    addSupportTicket
+    addSupportTicket,
+    getProductFromCart,
+    addToCart
   }
