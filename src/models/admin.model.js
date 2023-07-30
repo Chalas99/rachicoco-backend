@@ -47,8 +47,56 @@ const deleteProduct = (ID) => {
   });
 };
 
+const addUser = (data, res) => {
+ 
+  const email = data.email;
+  const userRole = data.role;
+  const startingDate = data.date;
+  const password = data.password;
+
+  const sql = "INSERT INTO sysusers ( email, userRole, startingDate, password) VALUES ( ?, ?, ?, ?)";
+  db.query(sql, [email, userRole, startingDate, password], (error, results) => {
+    if (error) {
+      return res.json({ error: " Internal  Error!" });
+    } else {
+      return res.send({ success: true, results: results, message: "Product added successfully" });
+    }
+  }); 
+};
+
+const findAllUsers = (res) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM sysusers";
+      db.query(sql, (error, results) => {
+        if (error) throw error;
+        if (results && !error) {
+          resolve(results);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
+const deleteUser = (ID) => {
+  return new Promise((resolve, reject) => {
+    const sql = "DELETE FROM sysusers WHERE userID=?";
+      db.query(sql, ID, (error, results) => {
+        if (error) throw error;
+        if (!error) {
+          resolve(results);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
 module.exports = {
     addProduct,
     findAllProduct,
-    deleteProduct
+    deleteProduct,
+    addUser,
+    findAllUsers,
+    deleteUser
   }

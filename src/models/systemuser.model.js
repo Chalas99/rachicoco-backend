@@ -5,10 +5,11 @@ const createUser = (data, res) => {
     const lastName = data.lastName;
     const email = data.email;
     const userRole = data.userRole;
+    const startingDate = data.startingDate;
     const password = data.password;
 
-    const sql = "INSERT INTO sysusers (firstName, lastName, email, userRole, password) VALUES (?, ?, ?, ?, ?)";
-    db.query(sql, [firstName, lastName, email, userRole, password], (error, results) => {
+    const sql = "INSERT INTO sysusers (firstName, lastName, email, userRole, startingDate, password) VALUES (?, ?, ?, ?, ?)";
+    db.query(sql, [firstName, lastName, email, userRole, startingDate, password], (error, results) => {
       if (error) {
         return res.json({ error: "Internal Server Error!" });
       } else {

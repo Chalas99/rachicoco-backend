@@ -68,9 +68,75 @@ const admin = require('../models/admin.model');
     }
   }
 
+  const addUsers = async (req, res) => {
+    try {
+      const {email, userRole, startingDate, password} = req.body;
+
+      const data = {
+         email : email,
+         userRole : userRole,
+         startingDate : startingDate,
+         password : password,
+        };
+
+      await admin.addUser(data, res);
+
+    } catch (error) {
+      res.json({ error: "Internal Server Error!" });
+    }
+      
+  }
+  const findAllUsers = async(req, res) => {
+  
+    try {
+      await admin.findAllUsers(res).then((users) =>{
+            if (users) {
+                return res.send({
+                error: false,
+                users: users,
+                message: 'succsessfully product received',
+              });
+            }
+          })
+        }
+          
+    catch (error) {
+      return res.send({
+        error: true,
+        message: 'Internal server error',
+      }); 
+    }
+  }
+  const deleteUsers = async(req, res) => {
+    const ID = req.params.id;
+    try {
+      await admin.deleteuser(ID).then(async (results) => {
+        if (results.affectedRows !== 0) {
+            return res.send({
+            error: false,
+            message: 'Product deleted successfully',
+          });
+        }else{
+          return res.send({
+            error: true,
+            message: 'No record on this ID',
+          });
+        }
+      })
+    } catch (error) {
+      return res.send({
+        error: true,
+        message: 'Something went wrong!',
+      }); 
+    }
+  }
+
   module.exports = {
     addProducts,
     findAllProducts,
-    deleteProduct
+    deleteProduct,
+    addUsers,
+    findAllUsers,
+    deleteUsers
    
   }
