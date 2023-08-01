@@ -14,6 +14,7 @@ const AdminApi = require('./src/apis/admin.api');
 const modApi = require('./src/apis/mod.api');
 const imgApi = require('./src/apis/img.api');
 const storeApi = require('./src/apis/store.api');
+const StripeApi = require('./src/routes/stripe');
 
 dotenv.config();
 const app = express();
@@ -35,6 +36,7 @@ app.use('/Admin', AdminApi());
 app.use('/moderator', modApi());
 app.use('/img', imgApi());
 app.use('/Store', storeApi());
+app.use('/stripe', StripeApi);
 
 // app.listen(PORT, () => {
 //       dbConnect();
@@ -43,4 +45,4 @@ app.use('/Store', storeApi());
 
 app.listen(DB_PORT, () => {
   console.log(`Server is up and running on PORT ${DB_PORT}`);
-}) 
+})

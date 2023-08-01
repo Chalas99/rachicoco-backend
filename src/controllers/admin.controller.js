@@ -7,6 +7,7 @@ const admin = require('../models/admin.model');
       const data = {
         Name:Name,
         category:category,
+        quantity:1,
         price:price,
         description:description,
         moisture_level: moisture_level,

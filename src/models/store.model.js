@@ -18,7 +18,7 @@ const findAllOrders = (res) => {
   const findOrderDetail = (ID) => {
     
     return new Promise((resolve, reject) => {
-        const sql = `SELECT o.orderID, c.firstName, c.lastName, c.contactNo, p.productID, p.Name AS productName, oi.quantity
+        const sql = `SELECT o.orderID, o.totalPrice, c.firstName, c.lastName, c.contactNo, c.email, p.productID, p.Name AS productName, oi.quantity, oi.price
         FROM orders AS o
         JOIN customers AS c ON o.cusID = c.customerID
         JOIN order_items AS oi ON o.orderID = oi.orderID

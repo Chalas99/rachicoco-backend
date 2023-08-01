@@ -20,6 +20,7 @@ const createSysUser = async (req, res) => {
           lastName:lastName,
           email: email,
           userRole: userRole,
+          // staringDate: staringDate,
           password: hashPassword,
         };
 

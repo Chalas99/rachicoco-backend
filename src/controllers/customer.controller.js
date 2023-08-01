@@ -85,6 +85,28 @@ const signIncustomer = async(req,res) => {
   }
 }
 
+const findAllCustomers = async(req, res) => {
+  
+  try {
+    await Customer.findAllCustomers(res).then((customer) =>{
+          if (customer) {
+              return res.send({
+              error: false,
+              customer: customer,
+              message: 'succsessfully customer detail received',
+            });
+          }
+        })
+      }
+        
+  catch (error) {
+    return res.send({
+      error: true,
+      message: 'Internal server error',
+    }); 
+  }
+}
+
 const addSupportTicket = async (req, res) => {
   const { name, email, type, subject, description } = req.body;
 
@@ -164,6 +186,44 @@ const addToCart = async(req, res) => {
   }
 }
 
+const placeOrder = async (cartItems, cusID, total) => {
+  const customerID = cusID;
+  const cart = cartItems;
+  const totalPrice = total;
+  const status = "Pending";
+  let date = new Date();
+  
+  try {
+    await Customer
+      .createOrder(customerID, totalPrice, status, date)
+      .then((order) => {
+        const orderID = order.orderID;
+
+        cart.map((item) => {
+          Customer.placeOrderItems(orderID, item);
+        });
+      });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getOrders = async (req, res) => {
+  const ID = req.params.id;
+  try {
+    await Customer.getOrders(ID).then((response) => {
+      if (response) {
+        return res.send({
+        error: false,
+        orders: response,
+        message: 'succsessfully orders received',
+      });
+    }
+    });
+  } catch (err) {
+    return res.json({ error: "Internal Server Error" });
+  }
+};
 
 
 
@@ -172,5 +232,8 @@ const addToCart = async(req, res) => {
     signIncustomer,
     addSupportTicket,
     getProductFromCart,
-    addToCart
+    addToCart,
+    findAllCustomers,
+    placeOrder,
+    getOrders
   }

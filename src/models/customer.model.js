@@ -33,6 +33,20 @@ const findCustomer = (email, res) => {
   });
 };
 
+const findAllCustomers = (res) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT * FROM customers";
+      db.query(sql, (error, results) => {
+        if (error) throw error;
+        if (results && !error) {
+          resolve(results);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
 const signInCustomer = (email) => {
   return new Promise((resolve, reject) => {
     const sql = "SELECT * FROM customers WHERE email=?";
@@ -101,11 +115,64 @@ const addToCart = (ID) => {
   });
 };
 
+const createOrder = (customerID, totalPrice, status, date) => {
+  return new Promise((resolve, reject) => {
+    const sql ="INSERT INTO orders (cusID, totalPrice, status, dateTime) VALUES (?, ?, ?, ?)";
+    db.query(sql, [customerID, totalPrice, status, date], (error, results) => {
+      if (error) {
+        console.log(err);
+        reject();
+      } else {
+        const sql ="SELECT * FROM orders ORDER BY orderID DESC LIMIT 1";
+        db.query(sql, [], (err, results) => {
+          if (err) {
+            reject();
+          } else {
+            console.log(results);
+            resolve(results[0]);
+          }
+        });
+      }
+    });
+  });
+};
+
+const placeOrderItems = (orderID, cart) => {
+    const sql ="INSERT INTO order_items (orderID, productID, quantity, price) VALUES (?, ?, ? ,?)";
+    db.query(sql, [orderID, cart.productID, cart.quantity, cart.price,], (err, results) => {
+        if (err) {
+          console.log("error");
+        }
+      }
+    );
+};
+
+const getOrders = (ID) => {
+  return new Promise((resolve, reject) => {
+    const sql ="SELECT order_items.*, products.Name, products.description, orders.dateTime, orders.status FROM order_items INNER JOIN orders ON order_items.orderID = orders.orderID INNER JOIN products ON order_items.productID = products.productID  WHERE orders.cusID = ? ORDER BY order_items.order_itemsID DESC";
+    db.query(
+      sql,
+      ID,
+      (error, results) => {
+        if (error) {
+          reject();
+        } else {
+          resolve(results);
+        }
+      }
+    );
+  });
+};
+
 module.exports = {
   createCustomer,
   findCustomer,
   signInCustomer,
   addSupportTicket,
   addToCart,
-  getProductFromCart
+  getProductFromCart,
+  findAllCustomers,
+  placeOrderItems,
+  getOrders,
+  createOrder
 }
