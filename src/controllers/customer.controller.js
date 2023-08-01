@@ -134,7 +134,7 @@ const addSupportTicket = async (req, res) => {
       subject: subject,
       description: description,
     };
-    rootModel.addSupportTicket(data, res);
+    Customer.addSupportTicket(data, res);
   } catch (err) {
     res.json({ error: err });
   }

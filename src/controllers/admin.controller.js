@@ -68,25 +68,7 @@ const admin = require('../models/admin.model');
       }); 
     }
   }
-
-  const addUsers = async (req, res) => {
-    try {
-      const {email, userRole, startingDate, password} = req.body;
-
-      const data = {
-         email : email,
-         userRole : userRole,
-         startingDate : startingDate,
-         password : password,
-        };
-
-      await admin.addUser(data, res);
-
-    } catch (error) {
-      res.json({ error: "Internal Server Error!" });
-    }
-      
-  }
+  
   const findAllUsers = async(req, res) => {
   
     try {
@@ -131,13 +113,83 @@ const admin = require('../models/admin.model');
       }); 
     }
   }
+  const getSalesData = async (req, res) => {
+    const { from, to } = req.body;
+  console.log(req.body);
+    if (!to) {
+      return res.json({ error: "To Date Can't be empty" });
+    }
+  
+    if (!from) {
+      return res.json({ error: "From Date Can't be empty" });
+    }
+  
+    try {
+      await admin.getSalesData(from, to, res).then((results) => {
+        if(results){
+          return res.send({
+            error: false,
+            records: results,
+            message: 'succsessfully received sales data!',
+          });
+        }
+      });
+    } catch (error) {
+      return res.json({ error: error });
+    }
+  };
 
+  const getCustomerCount = async(req, res) => {
+  
+    try {
+      await admin.getCustomerCount(res).then((count) =>{
+            if (count) {
+                return res.send({
+                error: false,
+                count: count,
+                message: 'count received succsessfully ',
+              });
+            }
+          })
+        }
+          
+    catch (error) {
+      return res.send({
+        error: true,
+        message: 'Internal server error',
+      }); 
+    }
+  }
+
+  const getOrderCount = async(req, res) => {
+  
+    try {
+      await admin.getOrderCount(res).then((count) =>{
+            if (count) {
+                return res.send({
+                error: false,
+                count: count,
+                message: 'count received succsessfully ',
+              });
+            }
+          })
+        }
+          
+    catch (error) {
+      return res.send({
+        error: true,
+        message: 'Internal server error',
+      }); 
+    }
+  }
   module.exports = {
     addProducts,
     findAllProducts,
     deleteProduct,
-    addUsers,
     findAllUsers,
-    deleteUsers
+    deleteUsers,
+    getSalesData,
+    getOrderCount,
+    getCustomerCount
    
   }

@@ -64,17 +64,12 @@ const signInCustomer = (email) => {
 
 const addSupportTicket = (data, res) => {
   const { name, email, type, subject, description } = data;
-  db.getConnection((err, connection) => {
-    if (err) {
-      return res.json({ error: err });
-    } else {
       const sql =
-        "INSERT INTO support_tickets (name, email,  subject, type, description) VALUES (?, ?, ?, ?, ?)";
-      connection.query(
+        "INSERT INTO support_tickets (name, email, subject, type, description) VALUES (?, ?, ?, ?, ?)";
+      db.query(
         sql,
         [name, email, subject, type, description],
         (err, results) => {
-          connection.release();
           if (err) {
             return res.json({ error: "Internal Server Error" });
           } else {
@@ -83,8 +78,7 @@ const addSupportTicket = (data, res) => {
           }
         }
       );
-    }
-  });
+
 };
 
 const getProductFromCart = (ID) => {

@@ -49,18 +49,19 @@ const deleteProduct = (ID) => {
 };
 
 const addUser = (data, res) => {
- 
+
+  const firstName = data.firstName;
+  const lastName = data.lastName;
   const email = data.email;
   const userRole = data.role;
-  const startingDate = data.date;
   const password = data.password;
 
-  const sql = "INSERT INTO sysusers ( email, userRole, startingDate, password) VALUES ( ?, ?, ?, ?)";
-  db.query(sql, [email, userRole, startingDate, password], (error, results) => {
+  const sql = "INSERT INTO sysusers ( firstName, lastName, email, userRole, password) VALUES ( ?, ?, ?, ?, ?)";
+  db.query(sql, [firstName, lastName, email, userRole, password], (error, results) => {
     if (error) {
       return res.json({ error: " Internal  Error!" });
     } else {
-      return res.send({ success: true, results: results, message: "Product added successfully" });
+      return res.send({ success: true, results: results, message: "User added successfully" });
     }
   }); 
 };
@@ -93,11 +94,56 @@ const deleteUser = (ID) => {
   });
 };
 
+const getSalesData = (from, to, res) => {
+  return new Promise((resolve, reject) => {
+        const sql ="SELECT SUM(totalPrice) AS total, COUNT(orderID) AS orderCount, CAST(dateTime AS DATE) AS date FROM orders WHERE CAST(dateTime AS DATE) BETWEEN ? AND ? GROUP BY CAST(dateTime AS DATE)";
+        db.query(sql, [from, to], (err, results) => {
+          console.log(results)
+          if (err) {
+            reject();
+          } else {
+            resolve(results);
+          }
+        });
+  });
+};
+
+const getCustomerCount = (res) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT COUNT(customerID) AS customerCount FROM customers";
+      db.query(sql, (error, results) => {
+        if (error) throw error;
+        if (results && !error) {
+          resolve(results[0]);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
+const getOrderCount = (res) => {
+  return new Promise((resolve, reject) => {
+    const sql = "SELECT COUNT(orderID) AS orderCount FROM orders";
+      db.query(sql, (error, results) => {
+        if (error) throw error;
+        if (results && !error) {
+          resolve(results[0]);
+        } else {
+          reject();
+        }
+      });
+  });
+};
+
 module.exports = {
     addProduct,
     findAllProduct,
     deleteProduct,
     addUser,
     findAllUsers,
-    deleteUser
+    deleteUser,
+    getSalesData,
+    getCustomerCount,
+    getOrderCount
   }

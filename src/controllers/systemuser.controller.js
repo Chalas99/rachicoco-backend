@@ -20,7 +20,6 @@ const createSysUser = async (req, res) => {
           lastName:lastName,
           email: email,
           userRole: userRole,
-          // staringDate: staringDate,
           password: hashPassword,
         };
 
@@ -84,7 +83,7 @@ const signInSystemUser = async(req,res) => {
         message: 'something went wrong',
       });
     }
-  }
+}
 
   module.exports = {
     signInSystemUser,
