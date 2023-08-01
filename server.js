@@ -13,6 +13,7 @@ const SysUserApi = require('./src/apis/systemuser.api')
 const AdminApi = require('./src/apis/admin.api');
 const modApi = require('./src/apis/mod.api');
 const imgApi = require('./src/apis/img.api');
+const storeApi = require('./src/apis/store.api');
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.use('/Sysuser', SysUserApi());
 app.use('/Admin', AdminApi());
 app.use('/moderator', modApi());
 app.use('/img', imgApi());
+app.use('/Store', storeApi());
 
 // app.listen(PORT, () => {
 //       dbConnect();
